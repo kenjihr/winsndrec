@@ -242,7 +242,7 @@ namespace winsndrec
                 throw new ArgumentNullException("audioClient");
             audioClient.Start();
 
-            bool stillPlaying = true;
+            var stillPlaying = true;
             while (stillPlaying)
             {
                 var waitArray = new IntPtr[3] { shutdownEvent, streamSwitchEvent, audioSamplesReadyEvent };
@@ -274,8 +274,8 @@ namespace winsndrec
                             throw new ArgumentNullException("mixFormat");
                         var buffer = audioCaptureClient.GetBuffer(out int framesAvailable, out AudioClientBufferFlags flags);
                         var bytesAvailable = framesAvailable * mixFormat.BlockAlign;
-                        byte[] bytes = new byte[bytesAvailable];
-                        bool isSilent = false;
+                        var bytes = new byte[bytesAvailable];
+                        var isSilent = false;
                         if ((flags & AudioClientBufferFlags.Silent) != 0)
                         {
                             isSilent = true;

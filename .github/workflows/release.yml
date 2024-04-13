@@ -1,0 +1,45 @@
+name: release
+
+on: 
+  push:
+    tags:
+      - "v*.*.*"
+
+env:
+  DOTNET_VERSION: '8.0.202'
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    permissions:
+      contents: write
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}
+
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@4d6c8fcf3c8f7a60068d26b594648e99df24cee3 # v4.0.0
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+
+    - name: Install dependencies
+      run: dotnet restore -p:PublishReadyToRun=true -p:PublishSingleFile=true --runtime:win-x64 --verbosity:normal
+      
+    - name: Build
+      run: dotnet publish ${{ github.workspace }}\winsndrec.sln --configuration Release --no-restore -p:PublishReadyToRun=true -p:PublishSingleFile=true --self-contained:false --runtime:win-x64 --verbosity normal
+
+    - name: Compress
+      run: |
+        $ZIP_PATH = "${{ github.workspace }}\winsndrec\bin\Release\net8.0\win-x64\winsndrec.${{ github.ref_name }}.win-x64.zip"
+        Get-ChildItem -Path ${{ github.workspace }}\winsndrec\bin\Release\net8.0\win-x64\publish | Compress-Archive -DestinationPath "$ZIP_PATH"
+        $ZIP_PATH = $ZIP_PATH -replace '\\','/'
+        echo "ZIP_PATH=$ZIP_PATH" >> $env:GITHUB_ENV
+
+    - name: Release
+      uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c887983e9fa900f0564 # v2.0.4
+      with:
+        files:
+          ${{ env.ZIP_PATH }}

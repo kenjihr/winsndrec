@@ -16,13 +16,12 @@ namespace winsndrec
             public float? TruncateSilence { get; set; }
         }
 
-        static WASAPICapture? capture;
-
         static int Main(string[] args)
         {
             string? outputBaseFileName = null;
             int? bitsPerSample = null;
             float? truncateSilence = null;
+            WASAPICapture? capture = null;
 
             Parser.Default.ParseArguments<Options>(args)
                 .WithParsed(parsed => {
