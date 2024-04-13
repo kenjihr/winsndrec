@@ -1,0 +1,21 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "launch",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build (debug)",
+            "program": "${workspaceFolder}/winsndrec/bin/Debug/net8.0/winsndrec.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/winsndrec",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}
